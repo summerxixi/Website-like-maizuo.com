@@ -1,0 +1,52 @@
+import axios from 'axios'
+import request from '@/utils/request'
+//@符号=》src的绝对路径
+function fn() {
+  return "Hello World";
+}
+`foo fn() bar`
+// foo Hello World bar
+export default {
+  data() {
+    return {
+      datalist: [],
+      mytext: ""
+    }
+  },
+  components: {
+
+  },
+  methods: {
+    handleAdd() {
+      request({
+        url: 'project/type/getByList', method: 'post',
+        data: { username: 'xiaohong', password: '123' }
+      }).then(res => {
+        console.log(res)
+      })
+      // this.datalist.push(this.mytext)
+      // this.mytext = ""
+    },
+    mounted() {
+      console.log("mounted")
+      fetch("./maoyan.json")
+        .then(res => res.json())
+        .then(res => {
+          console.log(res)
+          this.datalist = res.movieList
+          console.log(res.movieList)
+        }),
+        axios.get("./maoyan.json").then(res => {
+          console.log(res)
+          this.datalist = res.movieList
+        }),
+
+        axios.get("/eva/ajax/movieOnInfoList?token=&optimus_uuid=74B5F0A032A711EB82DD6B9282E93C676D27D7B9731D4E608D7612C3E708C120&optimus_risk_level=71&optimus_code=10')").then(res => {
+          console.log(res.data)
+          this.datalist = res.data.movieList
+        })
+    }
+  }
+}
+
+

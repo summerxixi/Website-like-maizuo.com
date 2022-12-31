@@ -9,7 +9,10 @@
 <script>
 import axios from 'axios'
 import request from '@/utils/request'
-import tabBar from './components/TabBar';
+import tabBar from './components/TabBar'
+import Vue from 'vue';
+import Vant from 'vant';
+import 'vant/lib/index.css';
 //@符号=》src的绝对路径
 export default{
   data(){

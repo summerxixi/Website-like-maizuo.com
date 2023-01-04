@@ -1,16 +1,16 @@
 <template>
     <div>
-        <van-nav-bar title="影院" ref="navbar" :fixed="true" >
+        <van-nav-bar title="影院" ref="navbar" :fixed="true">
             <template #left>
                 {{ $store.state.cityName }} <van-icon name="arrow-down" size="18" @click="handleLeft" />
             </template>
             <template #right>
-                <van-icon name="search" class="search-icon" size="18" color="black" @click="handleRight"/>
+                <van-icon name="search" class="search-icon" size="18" color="black" @click="handleRight" />
             </template>
         </van-nav-bar>
         <div class="box" :style="{ height: height }">
             <ul>
-                <li v-for="data in cinemaList" :key="data.cinemaId">
+                <li v-for="data in $store.state.cinemaList" :key="data.cinemaId">
                     <div class="left">
                         <div class="cinema_name">{{ data.name }}</div>
                         <div class="cinema_text">{{ data.address }}</div>
@@ -27,24 +27,24 @@
 </template>
 
 <script>
-import request from '@/utils/request'
+
 import BetterScroll from 'better-scroll'
 export default {
     data() {
         return {
-            cinemaList: [],
+            // cinemaList: [],
             height: '0px'
 
         }
 
     },
     methods: {
-        handleLeft(){
+        handleLeft() {
             this.$router.push('/city')
 
         },
-        handleRight(){
-            this.$router.push('/city')
+        handleRight() {
+            this.$router.push('/cinemas/search')
         }
 
     },
@@ -60,22 +60,29 @@ export default {
         // }).then(res => {
         //     console.log(res)
         // })
-        console.log("navbar")
-        //navbar的高度
-        console.log(this.$refs.navbar.$el.offsetHeight)
+        // console.log("navbar")
+        // //navbar的高度
+        // console.log(this.$refs.navbar.$el.offsetHeight)
         //动态计算高度
         console.log(document.querySelector('div.footer'))
-        this.height = document.documentElement.clientHeight - this.$refs.navbar.$el.offsetHeight-document.querySelector('div.footer').offsetHeight + 'px'
-        request({
-            url: '/gateway?cityId=110100&ticketFlag=1&k=545491',
-            headers: {
-                'X-Host': 'mall.film-ticket.cinema.list'
-            },
-            method: 'get'
-        }).then(res => {
-            // console.log(res.data.data.cinemas)
-            this.cinemaList = res.data.data.cinemas
-            // new BetterScroll('.box') //不能初始化过早
+        this.height = document.documentElement.clientHeight - this.$refs.navbar.$el.offsetHeight - document.querySelector('div.footer').offsetHeight + 'px'
+        console.log(this.$store.state.cityId)
+        if (this.$store.state.cinemaList.length === 0) {
+            //只要数据已经请求了就不再请求，所以if...
+             //但是由于时异步请求，better-scroll可能在数据没请求回来就开始了，所以要等异步请求结束了再进行nextTIck
+            //解决办法，改成promise对象，等resolve后再进行行动
+            this.$store.dispatch('getCinemaData', this.$store.state.cityId).then(res=>{
+                console.log("数据完事了")
+                this.$nextTick(() => {
+                new BetterScroll('.box', {
+                    scrollbar: {
+                        fade: true  //滚动条不滑动时消失
+                    }
+                })
+            })
+            })
+        } else {
+            console.log("缓存")
             this.$nextTick(() => {
                 new BetterScroll('.box', {
                     scrollbar: {
@@ -83,7 +90,26 @@ export default {
                     }
                 })
             })
-        })
+
+        }
+        // request({
+        //     url: `/gateway?cityId=${this.$store.state.cityId}&ticketFlag=1&k=545491`,
+        //     headers: {
+        //         'X-Host': 'mall.film-ticket.cinema.list'
+        //     },
+        //     method: 'get'
+        // }).then(res => {
+        //     // console.log(res.data.data.cinemas)
+        //     this.cinemaList = res.data.data.cinemas
+        //     // new BetterScroll('.box') //不能初始化过早
+        //     this.$nextTick(() => {
+        //         new BetterScroll('.box', {
+        //             scrollbar: {
+        //                 fade: true  //滚动条不滑动时消失
+        //             }
+        //         })
+        //     })
+        // })
     }
 }
 </script>
@@ -103,10 +129,12 @@ li {
     .left {
         width: 2.8rem;
     }
-    .search-icon{
+
+    .search-icon {
         padding-right: 12px;
-        
+
     }
+
     .cinema_name {
         color: #191a1b;
         font-size: 15px;

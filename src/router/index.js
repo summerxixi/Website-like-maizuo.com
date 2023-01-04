@@ -8,6 +8,7 @@ import ComingSoon from '@/views/films/ComingSoon'
 import Login from '@/views/Login'
 import Search from '@/views/Search'
 import Detail from '@/views/Detail'
+import City from '@/views/City'
 // import Order from '@/views/Order'
 
 Vue.use(VueRouter) // 注册路由插件, 两个全局 router-view router-link
@@ -18,6 +19,7 @@ const routes = [
     path: '/films',
     component: Films,
     children: [{
+      name:'nowPlaying',
       path: '/films/nowplaying',
       component: NowPlaying
     },
@@ -41,7 +43,7 @@ const routes = [
   {
     name: 'evaDetail',  //命名路由，都可以获得
     path: '/detail/:myid', //当点击跳转到不同的id时，需要用到动态路由 :myid(随意名字)
-    component: Detail
+    component: Detail  //好像去掉 /:myid不影响结果啊
   },
   {
     path: '/center',
@@ -61,7 +63,10 @@ const routes = [
     path: '/login',
     component: Login,
   },
-
+  {
+    path: '/city',
+    component: City,
+  },
   // 重定向
   {
     path: '*',

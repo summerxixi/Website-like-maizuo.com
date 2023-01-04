@@ -1,7 +1,7 @@
 <template>
     <div v-if="filminfo">
         <!-- 和datalist.length异曲同工之妙 -->
-        <detail-header v-scroll="50" >
+        <detail-header v-scroll="50">
             {{ filminfo.name }}
         </detail-header>
         <div :style="{ backgroundImage: 'url(' + filminfo.poster + ')' }" class="poster"></div>
@@ -38,7 +38,8 @@
                     <detail-swiper :preview="3.5" name="photos">
                         <detail-swiper-item v-for="(data, index) in filminfo.photos" :key="index">
                             <!-- <img :src="actor.avatarAddress" alt=""> -->
-                            <div :style="{ backgroundImage: 'url(' + data + ')' }" class="avater"></div>
+                            <div @click="handlePreview(index)" :style="{ backgroundImage: 'url(' + data + ')' }"
+                                class="avater"></div>
                         </detail-swiper-item>
                     </detail-swiper>
 
@@ -57,6 +58,7 @@ import detailSwiper from '@/components/detail/DetailSwiper'
 import detailSwiperItem from '@/components/detail/DetailSwiperItem'
 import detailHeader from '@/components/detail/DetailHeader'
 import '../assets/iconfont/iconfont.css'
+import { ImagePreview, Toast } from 'vant';
 import Vue from 'vue'
 moment.locale('zh-cn')
 Vue.filter('dateFilter', (date) => {
@@ -65,10 +67,10 @@ Vue.filter('dateFilter', (date) => {
 })
 
 Vue.directive('scroll', {
-    inserted(el,binding) {
+    inserted(el, binding) {
         el.style.display = 'none'
         console.log(binding)
-        //console.log(el)//拿到dom节点  封装成指令，然后对dom进行过是否显示操作
+        //console.log(el)//拿到dom节点  封装成指令，然后对dom进行过是否显示操作 ,binding.value就是底部tabber的值
         window.onscroll = () => {
             if ((document.documentElement.scrollTop || document.body.scrollTop) > binding.value) {
                 el.style.display = 'block'
@@ -77,7 +79,7 @@ Vue.directive('scroll', {
             }
         }
     },
-    unbind(){
+    unbind() {
         window.scroll = null
     }
 })
@@ -94,8 +96,18 @@ export default {
         detailHeader
     },
 
-
+    methods: {
+        handlePreview(position) {
+            ImagePreview({
+                images: this.filminfo.photos,
+                startPosition: position,
+                closeable: true,
+                closeIconPosition: 'top-right'
+            });
+        }
+    },
     created() {
+
         console.log('created', this.$route.params.myid)
         console.log(this.$route) //拿到当前匹配的detail的路由，有params:myid:""
         //this.$route.params.myid  然后axios利用myid发请求到详细接口，获取详细数据，布局页面
@@ -108,8 +120,9 @@ export default {
             //
             this.filminfo = res.data.data.film
             this.filminfo.premiereAt = new Date(this.filminfo.premiereAt)
-            console.log(this.filminfo.premiereAt * 1000)
-            console.log(res.data.data.film)
+            // console.log(this.filminfo.premiereAt * 1000)
+            // console.log(res.data.data.film)
+
         })
     },
     // mounted() {

@@ -22,6 +22,7 @@
 
 
 import axios from 'axios'
+import {Toast} from 'vant'
 
 // function httpfilmlist(params){
 //   return  axios({
@@ -48,13 +49,51 @@ import axios from 'axios'
 //   httpfilm
 // }
 //到时候使用的时候 import  rquest  使用要request.httpfilmlist 和httpfilm
+//加载这个东西总是要请求，不需要重复加载，所以需要二度封装，成功拦截好
+// // Toast.loading({
+//   message: '加载中...',
+//   forbidClick: true,
+//   duration:0
+// });
 
+//Toast.clear()
+
+//axios拦截器
 
 const request = axios.create({
   baseURL: 'https://m.maizuo.com',
-  timeout: 10000  ,
-  headers: { ' X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.1","e":"16720644901216055565352961","bc":"110100"}',
-}
+  timeout: 10000,
+  headers: {
+    ' X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.1","e":"16720644901216055565352961","bc":"110100"}',
+  }
 });
 
+//发请求之前的拦截 先经过拦截再.then
+request.interceptors.request.use(function (config) {
+  console.log(config)
+  Toast.loading({
+  message: '加载中...',
+  forbidClick: true,
+  duration:0
+});
+  return config
+  
+    // ...config,
+    // xxxx:'其他加的参数或者描述'
+    
+}, function (error) {
+
+  return Promise.reject(error);
+});
+
+// 
+// Add a response interceptor
+request.interceptors.response.use(function (response) {
+  //将返回的数据进行处理，添加返回数据
+  Toast.clear()
+  return response;
+}, function (error) {
+  Toast.clear()
+  return Promise.reject(error);
+});
 export default request

@@ -1,6 +1,14 @@
 <template>
     <div>
-        <div class="box" :style="{height:height}">
+        <van-nav-bar title="影院" ref="navbar" :fixed="true" >
+            <template #left>
+                {{ $store.state.cityName }} <van-icon name="arrow-down" size="18" @click="handleLeft" />
+            </template>
+            <template #right>
+                <van-icon name="search" class="search-icon" size="18" color="black" @click="handleRight"/>
+            </template>
+        </van-nav-bar>
+        <div class="box" :style="{ height: height }">
             <ul>
                 <li v-for="data in cinemaList" :key="data.cinemaId">
                     <div class="left">
@@ -25,11 +33,22 @@ export default {
     data() {
         return {
             cinemaList: [],
-            height:'0px'
+            height: '0px'
 
         }
 
     },
+    methods: {
+        handleLeft(){
+            this.$router.push('/city')
+
+        },
+        handleRight(){
+            this.$router.push('/city')
+        }
+
+    },
+
     mounted() {
         // request({
         //     url: '/gateway?cityId=511500&pageNum=1&pageSize=18&type=1&k=6091557',
@@ -41,9 +60,12 @@ export default {
         // }).then(res => {
         //     console.log(res)
         // })
+        console.log("navbar")
+        //navbar的高度
+        console.log(this.$refs.navbar.$el.offsetHeight)
         //动态计算高度
         console.log(document.querySelector('div.footer'))
-        this.height = document.documentElement.clientHeight - document.querySelector('div.footer').offsetHeight+'px'
+        this.height = document.documentElement.clientHeight - this.$refs.navbar.$el.offsetHeight-document.querySelector('div.footer').offsetHeight + 'px'
         request({
             url: '/gateway?cityId=110100&ticketFlag=1&k=545491',
             headers: {
@@ -81,7 +103,10 @@ li {
     .left {
         width: 2.8rem;
     }
-
+    .search-icon{
+        padding-right: 12px;
+        
+    }
     .cinema_name {
         color: #191a1b;
         font-size: 15px;

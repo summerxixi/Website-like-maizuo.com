@@ -1,6 +1,6 @@
 <template>
 <div class="header">
-    <i class="iconfont icon-fanhui" @click="handleBack">ddd</i>
+    <i class="iconfont icon-fanhui" @click="handleBack"></i>
    <slot></slot>
 </div>
 </template>
@@ -8,7 +8,6 @@
 export default{
     methods:{
         handleBack(){
-            console.log('jjj')
             this.$router.back() //返回上一个页面
             //有history.back()和history.go(-1)
         }

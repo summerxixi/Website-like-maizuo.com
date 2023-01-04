@@ -13,7 +13,10 @@ import tabBar from './components/TabBar'
 import Vue from 'vue';
 import Vant from 'vant';
 import 'vant/lib/index.css';
+<<<<<<< HEAD
 Vue.use(Vant);
+=======
+>>>>>>> 6709cc2c7ef5d55f1f377f92c7498ab84350e290
 //@符号=》src的绝对路径
 export default{
   data(){

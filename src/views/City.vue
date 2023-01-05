@@ -14,7 +14,10 @@
 <script>
 import request from '@/utils/request'
 import { Toast } from 'vant'
+import obj from '@/utils/mixinObj'
+
 export default {
+    mixins:[obj],    //同methods不会冲突，会合并
     data() {
         return {
             cityList: [],
@@ -23,7 +26,9 @@ export default {
 
         }
     },
+    
     mounted() {
+        
         request({
             url: '/gateway?k=6377500',
             headers: {
@@ -92,7 +97,6 @@ export default {
             //     }
             // })
            // this.$store.state.cityName = item.name //为什么否定这种直接修改啊的效果？ 如果多个页面都进行修改，很难赵bug
-            this.$store.commit('clearCinemaList') //每次切换城市要记得将原来的电影列表清空
             this.$store.commit('changeCityName',item.name) 
             this.$store.commit('changeCityId',item.cityId)
             this.$router.back()

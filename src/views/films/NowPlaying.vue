@@ -40,8 +40,10 @@ export default {
         }
     },
     mounted() {
+        console.log(this.$store.state.cityId)
+             
         request({
-            url: `/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=103337`,
+            url: `/gateway?cityId=${this.$store.state.cityId}&pageNum=1&pageSize=10&type=1&k=103337`,
             headers: {
                 'X-Host': 'mall.film-ticket.film.list'
             },
@@ -50,6 +52,7 @@ export default {
             this.datalist = res.data.data.films
             // console.log("dddddd")
             // console.log(this.$store)
+            console.log(res.data.data)
             // console.log(res.data.data.films)
             this.total = res.data.data.total
         })
@@ -65,13 +68,15 @@ export default {
 
             this.current++
             request({
-                url: `/gateway?cityId=110100pageNum=${this.current}&pageSize=10&type=1&k=103337`,
+                url: `/gateway?cityId=${this.$store.state.cityId}pageNum=${this.current}&pageSize=1&type=1&k=103337`,
                 headers: {
                     'X-Host': 'mall.film-ticket.film.list'
                 },
                 method: 'get'
             }).then(res => {
                 // this.datalist = res.data.data.films  用this.current获取新的数据，pagenum的值不是1，每次获取一页，获取后新的要和原来的合并
+                console.log(res.data.data)
+                debugger
                 this.datalist = [...this.datalist, ...res.data.data.films]
                 //将loading主动设置为false
                 this.loading = false

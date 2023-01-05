@@ -2,7 +2,7 @@
     <div>
         <van-nav-bar title="影院" ref="navbar" :fixed="true">
             <template #left>
-                {{ $store.state.cityName }} <van-icon name="arrow-down" size="18" @click="handleLeft" />
+                {{cityName }} <van-icon name="arrow-down" size="18" @click="handleLeft" />
             </template>
             <template #right>
                 <van-icon name="search" class="search-icon" size="18" color="black" @click="handleRight" />
@@ -10,7 +10,7 @@
         </van-nav-bar>
         <div class="box" :style="{ height: height }">
             <ul>
-                <li v-for="data in $store.state.cinemaList" :key="data.cinemaId">
+                <li v-for="data in cinemaList" :key="data.cinemaId">
                     <div class="left">
                         <div class="cinema_name">{{ data.name }}</div>
                         <div class="cinema_text">{{ data.address }}</div>
@@ -29,6 +29,7 @@
 <script>
 
 import BetterScroll from 'better-scroll'
+import { mapState,mapActions,mapMutations} from 'vuex'
 export default {
     data() {
         return {
@@ -38,40 +39,36 @@ export default {
         }
 
     },
+    computed:{
+        ...mapState(['cinemaList','cityId','cityName']) //函数调用，返回一个对象 等于 cinemaList：function(){return this.$store.state.cine..}
+//这里还可以实现其余对象和...mapState的解析合并，拓展为更大的对象 state有什么状态就指能映射什么状态
+    },
     methods: {
+        ...mapActions(['getCinemaData']),
+        ...mapMutations(['clearCinemaList']),
+
         handleLeft() {
             this.$router.push('/city')
+            this.clearCinemaList() //每次切换城市要记得将原来的电影列表清空
 
         },
         handleRight() {
             this.$router.push('/cinemas/search')
-        }
-
+        },
     },
 
     mounted() {
-        // request({
-        //     url: '/gateway?cityId=511500&pageNum=1&pageSize=18&type=1&k=6091557',
-        //     headers: {
-        //         'X-Host': 'mall.film-ticket.film.list'
-        //     },l
-        //     method:'get'
-
-        // }).then(res => {
-        //     console.log(res)
-        // })
-        // console.log("navbar")
         // //navbar的高度
         // console.log(this.$refs.navbar.$el.offsetHeight)
         //动态计算高度
         console.log(document.querySelector('div.footer'))
         this.height = document.documentElement.clientHeight - this.$refs.navbar.$el.offsetHeight - document.querySelector('div.footer').offsetHeight + 'px'
-        console.log(this.$store.state.cityId)
-        if (this.$store.state.cinemaList.length === 0) {
+        // console.log(this.$store.state.cityId)
+        if (this.cinemaList.length === 0) {
             //只要数据已经请求了就不再请求，所以if...
              //但是由于时异步请求，better-scroll可能在数据没请求回来就开始了，所以要等异步请求结束了再进行nextTIck
-            //解决办法，改成promise对象，等resolve后再进行行动
-            this.$store.dispatch('getCinemaData', this.$store.state.cityId).then(res=>{
+            //解决办法，改成promise对象，等resolve后再进行行动   this.$store.dispatch('getCinemaData', this.cityId).then
+            this.getCinemaData(this.cityId).then(res=>{
                 console.log("数据完事了")
                 this.$nextTick(() => {
                 new BetterScroll('.box', {

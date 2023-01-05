@@ -1,14 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import request from '@/utils/request'
+import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  //持久化
+  plugins: [createPersistedState({
+    reducer:(state)=>{
+      return{
+        //需要持久化的部分，没有resucer就是所有的都存储了
+      cityId:state.cityId,
+      cityName:state.cityName
+      }
+
+    }
+  })],
   //公共状态，将公共用的东西保存，其余地方都可以用
   state: {
     cityId: '110100',
     cityName: '北京',
-    cinemaList: []
+    cinemaList: [],
+    isTabbarShow:true
   },
   //mutations用来对状态进行修改，到时候可以知道修改的地方  /共同管理和呗devtools监控
   mutations: {
@@ -25,6 +38,12 @@ export default new Vuex.Store({
     },
     clearCinemaList(state){
       state.cinemaList = []
+    },
+    show(state){
+      state.isTabbarShow = true
+    },
+    hidden(state){
+      state.isTabbarShow = false
     }
 
   },

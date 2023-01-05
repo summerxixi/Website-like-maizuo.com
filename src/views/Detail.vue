@@ -60,6 +60,7 @@ import detailHeader from '@/components/detail/DetailHeader'
 import '../assets/iconfont/iconfont.css'
 import { ImagePreview, Toast } from 'vant';
 import Vue from 'vue'
+import obj from '@/utils/mixinObj'
 moment.locale('zh-cn')
 Vue.filter('dateFilter', (date) => {
     return moment(date * 1000).format('YYYY-MM-DD')
@@ -84,6 +85,7 @@ Vue.directive('scroll', {
     }
 })
 export default {
+    mixins:[obj],
     data() {
         return {
             filminfo: null,//返回一个对象的,数据没回来啊之前就渲染会报错的
@@ -106,7 +108,7 @@ export default {
             });
         }
     },
-    created() {
+    mounted() {
 
         console.log('created', this.$route.params.myid)
         console.log(this.$route) //拿到当前匹配的detail的路由，有params:myid:""
